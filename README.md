@@ -1,7 +1,7 @@
 <p align="center">
   <img width="" height="120" src=./artsmart-logo.jpg></p>
 
-# <div align="center">Back End</div>
+# <div align="center">Dashboard</div>
 
 <br>
 
@@ -13,4 +13,4 @@
 - [Mahdi](https://github.com/MS944)<br>
 - [Bradley ](https://github.com/BradleyJrichardson)<br>
 
-> ### This project is split over two Repos | [Frontend](https://github.com/BradleyJrichardson/artsmart-craft-cottage)<br>
+> ### This project is split over three Repos | [Frontend](https://github.com/BradleyJrichardson/artsmart-craft-cottage)<br>
