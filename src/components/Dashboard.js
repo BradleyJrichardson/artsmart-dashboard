@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Order from "./Order";
+import { Link } from "react-router-dom";
 
 class Dashboard extends React.Component {
   state = {
@@ -23,7 +24,6 @@ class Dashboard extends React.Component {
         console.log(err);
       }
     }
-    console.log(this.state);
   }
 
   render() {
@@ -35,7 +35,17 @@ class Dashboard extends React.Component {
         <React.Fragment>
           <h1>Orders</h1>
           {data.map((order, index) => (
-            <Order key={index} order={order} />
+            <Link
+              key={index}
+              to={{
+                pathname: "/order",
+                state: {
+                  order: order
+                }
+              }}
+            >
+              <Order key={index} order={order} />
+            </Link>
           ))}
         </React.Fragment>
       );
