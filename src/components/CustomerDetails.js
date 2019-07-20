@@ -3,11 +3,7 @@ import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
 import { ContextConsumer } from "../context/context";
 
-const convertTime = epoch => {
-  return new Date(epoch * 1000).toDateString();
-};
-
-const OrderDetails = props => {
+const CustomerDetails = props => {
   let {
     amount,
     customer: customer_id,
@@ -15,8 +11,7 @@ const OrderDetails = props => {
     id,
     items,
     status,
-    shipping,
-    created
+    shipping
   } = props.location.state.order;
 
   return (
@@ -45,9 +40,7 @@ const OrderDetails = props => {
                   <Badge variant="warning">Refunded</Badge>
                 )}
               </h3>
-              <p>{convertTime(created)}</p>
               <p>{shipping.name}</p>
-
               <p>{shipping.phone}</p>
               <p>{email}</p>
               <h2>Order Items</h2>
@@ -98,7 +91,7 @@ const OrderDetails = props => {
     </ContextConsumer>
   );
 };
-export default OrderDetails;
+export default CustomerDetails;
 
 {
   /* <ButtonToolbar>
