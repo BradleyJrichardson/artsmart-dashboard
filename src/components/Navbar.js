@@ -68,19 +68,24 @@ class Navbar extends React.Component {
           )}
         </div>
         <h3>Artsmart Craft Cottage</h3>
-        <h5>
-          <b>Signed is as: </b> <i>Libby Richardson</i>
-        </h5>
+        <div className="logout-div">
+          <h5>
+            <b>Signed is as: </b> <i>Libby Richardson</i>
+            <Link
+              to="/"
+              onClick={() => {
+                this.props.logout();
+              }}
+            >
+              <h3 className="nav-items">
+                <Badge variant="danger">Logout </Badge>
+              </h3>
+            </Link>
+          </h5>
+        </div>
       </nav>
     );
   }
 }
 
 export default Navbar;
-
-// {
-//   status === "created" && <Badge variant="secondary">Created</Badge>;
-// }
-// {
-//   status === "paid" && <Badge variant="primary">Paid</Badge>;
-// }

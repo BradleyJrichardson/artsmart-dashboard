@@ -9,10 +9,11 @@ import CustomerDetails from "./components/CustomerDetails";
 import { ContextProvider } from "./context/context";
 import Container from "react-bootstrap/Container";
 import Navbar from "./components/Navbar";
+import Login from "./components/Login";
 
 class App extends React.Component {
   state = {
-    auth: false,
+    authentication: false,
     fetching: true,
     orders: null,
     customers: null
@@ -23,17 +24,50 @@ class App extends React.Component {
       try {
         const orderResponse = await axios.get("dashboard/orders");
         const custResponse = await axios.get("dashboard/customers");
+        const token = localStorage.getItem("token");
+        const authentication = await axios.get(
+          "http://localhost:5000/user/current-user",
+          { headers: { token: token } }
+        );
         this.setState({
           orders: orderResponse.data,
           customers: custResponse.data,
           fetching: false,
-          auth: true
+          authentication: true,
+          currentUser: authentication.data
         });
       } catch (err) {
         console.log(err);
       }
     }
   }
+
+  // get countries list data
+  login = async userCredentials => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/auth/login",
+        userCredentials
+      );
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      this.setState({
+        authentication: true
+      });
+    } catch (err) {
+      this.setState({
+        authentication: false,
+        error: err
+      });
+    }
+  };
+
+  // get countries list data
+  logout = () => {
+    this.setState({
+      authentication: false
+    });
+  };
 
   payOrder(order) {
     axios
@@ -78,7 +112,7 @@ class App extends React.Component {
   }
 
   render() {
-    if (this.state.auth) {
+    if (this.state.authentication) {
       return (
         <ContextProvider
           value={{
@@ -90,7 +124,7 @@ class App extends React.Component {
           }}
         >
           <Router>
-            <Navbar />
+            <Navbar logout={this.logout} />
             <Switch>
               <Container>
                 <Route exact path="/" component={Orders} />
@@ -104,7 +138,7 @@ class App extends React.Component {
         </ContextProvider>
       );
     } else {
-      return null;
+      return <Login login={this.login} />;
     }
   }
 }
