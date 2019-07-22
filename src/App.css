@@ -37,3 +37,7 @@
 .logout-div {
   text-align: center;
 }
+
+.total {
+  float: right;
+}

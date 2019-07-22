@@ -1,90 +1,57 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
-import Badge from "react-bootstrap/Badge";
 import { ContextConsumer } from "../context/context";
+import Order from "./Order";
+import { Link } from "react-router-dom";
 
+const convertTime = epoch => {
+  return new Date(epoch * 1000).toDateString();
+};
 const CustomerDetails = props => {
   let {
-    amount,
-    customer: customer_id,
+    address,
+    created,
     email,
     id,
-    items,
-    status,
-    shipping
-  } = props.location.state.order;
-
+    name,
+    phone
+  } = props.location.state.customer;
+  let { city, country, line1, postal_code, state } = address;
   return (
     <ContextConsumer>
       {value => {
-        let customer = value.customers.data.find(
-          cust => cust.id === customer_id
-        );
-        let order = {
-          order_id: id,
-          token: customer.default_source
-        };
+        let orders = value.orders.data.filter(order => order.customer === id);
         return (
           <div className="order-details">
-            <h3>{id}</h3>
-            <div>
-              <h3>
-                {status === "created" && (
-                  <Badge variant="secondary">Created</Badge>
-                )}
-                {status === "paid" && <Badge variant="primary">Paid</Badge>}
-                {status === "fulfilled" && (
-                  <Badge variant="success">Fullfilled</Badge>
-                )}
-                {status === "refunded" && (
-                  <Badge variant="warning">Refunded</Badge>
-                )}
-              </h3>
-              <p>{shipping.name}</p>
-              <p>{shipping.phone}</p>
-              <p>{email}</p>
-              <h2>Order Items</h2>
-              {items.map(item => (
-                <div>
-                  <p>${item.amount}</p>
-                  <p>{item.description}</p>
-                  <br />
-                </div>
-              ))}
-              <p>Total: {amount / 100}</p>
-              <h3>
-                {status === "created" && (
-                  <Button
-                    variant="outline-primary"
-                    onClick={() => {
-                      value.payOrder(order);
-                    }}
-                  >
-                    Get Money (process payment)
-                  </Button>
-                )}
-                {status === "paid" && (
-                  <Button
-                    variant="outline-success"
-                    onClick={() => {
-                      value.fullfillOrder(order);
-                    }}
-                  >
-                    Posted
-                  </Button>
-                )}
-                {status === "fulfilled" && (
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => {
-                      value.refundOrder(order);
-                    }}
-                  >
-                    Refund
-                  </Button>
-                )}
-              </h3>
-            </div>
+            <h3 className="content-title">{name}</h3>
+            <p>
+              <strong>Created on: </strong>
+              {convertTime(created)} <br />
+              <strong>Email: </strong> {email} <br />
+              <strong>Phone: </strong> {phone} <br />
+              <strong>Customer ID: </strong> {id}
+            </p>
+
+            <h3>Shipping Details</h3>
+            <p>
+              {line1}
+              <br />
+              {city}, {postal_code} <br />
+              {state}, {country}
+            </p>
+            <h3>Orders</h3>
+            {orders.map((order, index) => (
+              <Link
+                key={index}
+                to={{
+                  pathname: "/order",
+                  state: {
+                    order: order
+                  }
+                }}
+              >
+                <Order key={index} order={order} />
+              </Link>
+            ))}
           </div>
         );
       }}
@@ -92,15 +59,3 @@ const CustomerDetails = props => {
   );
 };
 export default CustomerDetails;
-
-{
-  /* <ButtonToolbar>
-  <Button variant="outline-secondary">Secondary</Button>
-  <Button variant="outline-success">Success</Button>
-  <Button variant="outline-warning">Warning</Button>
-  <Button variant="outline-danger">Danger</Button>
-  <Button variant="outline-info">Info</Button>
-  <Button variant="outline-light">Light</Button>
-  <Button variant="outline-dark">Dark</Button>
-</ButtonToolbar>; */
-}

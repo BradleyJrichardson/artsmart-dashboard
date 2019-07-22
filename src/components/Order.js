@@ -12,8 +12,6 @@ const convertTime = epoch => {
 
 const Order = props => {
   let { amount, email, status, shipping, created, items } = props.order;
-
-  console.log(props.order);
   return (
     <Row>
       <Col xs={4} md={2}>

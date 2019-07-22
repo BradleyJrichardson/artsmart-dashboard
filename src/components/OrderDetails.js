@@ -2,6 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
 import { ContextConsumer } from "../context/context";
+import Table from "react-bootstrap/Table";
 
 const convertTime = epoch => {
   return new Date(epoch * 1000).toDateString();
@@ -18,10 +19,11 @@ const OrderDetails = props => {
     shipping,
     created
   } = props.location.state.order;
-
+  let { city, country, line1, postal_code, state } = shipping.address;
   return (
     <ContextConsumer>
       {value => {
+        console.log(value);
         let customer = value.customers.data.find(
           cust => cust.id === customer_id
         );
@@ -31,7 +33,10 @@ const OrderDetails = props => {
         };
         return (
           <div className="order-details">
-            <h3>{id}</h3>
+            <h2 className="content-title">{id}</h2>
+            <p>
+              <i>{convertTime(created)} </i>
+            </p>
             <div>
               <h3>
                 {status === "created" && (
@@ -45,20 +50,45 @@ const OrderDetails = props => {
                   <Badge variant="warning">Refunded</Badge>
                 )}
               </h3>
-              <p>{convertTime(created)}</p>
-              <p>{shipping.name}</p>
 
-              <p>{shipping.phone}</p>
-              <p>{email}</p>
-              <h2>Order Items</h2>
-              {items.map(item => (
-                <div>
-                  <p>${item.amount}</p>
-                  <p>{item.description}</p>
-                  <br />
-                </div>
-              ))}
-              <p>Total: {amount / 100}</p>
+              <h3>Customer Details</h3>
+              <p>
+                <strong>name: </strong>
+                {shipping.name} <br /> <strong>phone: </strong>
+                {shipping.phone} <br /> <strong>email: </strong>
+                {email}
+              </p>
+
+              <h3>Order Items</h3>
+              <Table striped bordered hover size="sm">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                {items.map(item => (
+                  <tbody>
+                    <tr>
+                      <td>{item.description}</td>
+                      <td>{item.quantity}</td>
+                      <td>{item.amount / 100}</td>
+                    </tr>
+                  </tbody>
+                ))}
+              </Table>
+
+              <p className="total">
+                <h6>Total: ${amount / 100}</h6>
+              </p>
+              <h3>Shipping Details</h3>
+              <p>
+                {line1}
+                <br />
+                {city}, {postal_code} <br />
+                {state}, {country}
+              </p>
               <h3>
                 {status === "created" && (
                   <Button

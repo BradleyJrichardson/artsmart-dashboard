@@ -16,7 +16,6 @@ class Orders extends React.Component {
       <ContextConsumer>
         {value => {
           let { data } = value.orders;
-          console.log(data);
 
           const mapAll = () => {
             return data.map((order, index) => (
