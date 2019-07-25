@@ -20,23 +20,32 @@ class Login extends React.Component {
       return <Redirect to="/list" />;
     } else {
       return (
-        <form>
-          <label>Username</label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            onChange={this.handleInput}
-          />
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            onChange={this.handleInput}
-          />
-          <input type="submit" value="Submit" onClick={this.handleLogin} />
-        </form>
+        <div className="form-container">
+          <form>
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              onChange={this.handleInput}
+            />
+            <br />
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              onChange={this.handleInput}
+            />
+            <br />
+            <input
+              className="button"
+              type="submit"
+              value="Submit"
+              onClick={this.handleLogin}
+            />
+          </form>
+        </div>
       );
     }
   }

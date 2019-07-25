@@ -41,3 +41,8 @@
 .total {
   float: right;
 }
+
+.form-container {
+  margin-top: 300px;
+  text-align: center;
+}

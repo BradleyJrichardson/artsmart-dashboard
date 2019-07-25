@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
 import { ContextConsumer } from "../context/context";
 import Table from "react-bootstrap/Table";
+import { Link } from "react-router-dom";
 
 const convertTime = epoch => {
   return new Date(epoch * 1000).toDateString();
@@ -91,34 +92,42 @@ const OrderDetails = props => {
               </p>
               <h3>
                 {status === "created" && (
-                  <Button
-                    variant="outline-primary"
-                    onClick={() => {
-                      value.payOrder(order);
-                    }}
-                  >
-                    Get Money (process payment)
-                  </Button>
+                  <Link to="/orders">
+                    <Button
+                      variant="outline-primary"
+                      onClick={() => {
+                        value.payOrder(order);
+                      }}
+                    >
+                      Collect Payment
+                    </Button>
+                  </Link>
+
+                  // <div onClick={() => value.payOrder(this)}>Get money</div>
                 )}
                 {status === "paid" && (
-                  <Button
-                    variant="outline-success"
-                    onClick={() => {
-                      value.fullfillOrder(order);
-                    }}
-                  >
-                    Posted
-                  </Button>
+                  <Link to="/orders">
+                    <Button
+                      variant="outline-success"
+                      onClick={() => {
+                        value.fullfillOrder(order);
+                      }}
+                    >
+                      Posted
+                    </Button>
+                  </Link>
                 )}
                 {status === "fulfilled" && (
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => {
-                      value.refundOrder(order);
-                    }}
-                  >
-                    Refund
-                  </Button>
+                  <Link to="/">
+                    <Button
+                      variant="outline-danger"
+                      onClick={() => {
+                        value.refundOrder(order);
+                      }}
+                    >
+                      Refund
+                    </Button>
+                  </Link>
                 )}
               </h3>
             </div>

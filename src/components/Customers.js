@@ -46,7 +46,6 @@ const Customers = () => {
                 <Customer key={index} customer={customer} />
               </Link>
             ))}
-            <div className="text"> hello</div>
           </React.Fragment>
         );
       }}

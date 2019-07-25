@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
 import Orders from "./components/Orders";
@@ -21,17 +16,23 @@ class App extends React.Component {
     authentication: false,
     fetching: true,
     orders: null,
-    customers: null
+    customers: null,
+    updated: false
   };
 
   async componentDidMount() {
     if (this.state.fetching === true) {
       try {
-        const orderResponse = await axios.get("dashboard/orders");
-        const custResponse = await axios.get("dashboard/customers");
+        const orderResponse = await axios.get(
+          process.env.REACT_APP_BACK_URL + "/dashboard/orders"
+        );
+        const custResponse = await axios.get(
+          process.env.REACT_APP_BACK_URL + "/dashboard/customers"
+        );
         const token = localStorage.getItem("token");
+
         const authentication = await axios.get(
-          "http://localhost:5000/user/current-user",
+          process.env.REACT_APP_BACK_URL + "/user/current-user",
           { headers: { token: token } }
         );
         this.setState({
@@ -39,19 +40,34 @@ class App extends React.Component {
           customers: custResponse.data,
           fetching: false,
           authentication: true,
-          currentUser: authentication.data
+          currentUser: authentication.data,
+          updated: false
         });
       } catch (err) {
         console.log(err);
       }
     }
   }
+  updateOrderStatus = async () => {
+    debugger;
+    try {
+      const orderResponse = await axios.get(
+        process.env.REACT_APP_BACK_URL + "/dashboard/orders"
+      );
+      this.setState({
+        orders: orderResponse.data,
+        updated: false
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  // get countries list data
   login = async userCredentials => {
+    console.log("here");
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/login",
+        process.env.REACT_APP_BACK_URL + "/auth/login",
         userCredentials
       );
       const token = response.data.token;
@@ -67,83 +83,96 @@ class App extends React.Component {
     }
   };
 
-  // get countries list data
   logout = () => {
     this.setState({
       authentication: false
     });
   };
 
-  payOrder(order) {
+  payOrder = async order => {
+    console.log(this);
+    const response = await axios.post(
+      process.env.REACT_APP_BACK_URL + "/dashboard/pay/",
+      {
+        order
+      }
+    );
+    if (response) {
+      this.setState({
+        updated: true
+      });
+    }
+  };
+
+  fullfillOrder = async order => {
+    const response = await axios.post(
+      process.env.REACT_APP_BACK_URL + "/dashboard/fullfill/",
+      {
+        order
+      }
+    );
+    if (response) {
+      this.setState({
+        updated: true
+      });
+    }
+  };
+
+  refundOrder = order => {
     axios
-      .post("/dashboard/pay/", {
+      .post(process.env.REACT_APP_BACK_URL + "/dashboard/pay/", {
         order
       })
       .then(() => {
-        alert(`order payed!`);
+        this.setState({
+          updated: true
+        });
       })
       .catch(error => {
         alert("problem paying order");
         console.log(error);
       });
-  }
-
-  fullfillOrder(order) {
-    axios
-      .post("/dashboard/fullfill/", {
-        order
-      })
-      .then(() => {
-        alert(`order Fullfilled!`);
-      })
-      .catch(error => {
-        alert("problem Fullfilling order");
-        console.log(error);
-      });
-  }
-
-  refundOrder(order) {
-    axios
-      .post("/dashboard/pay/", {
-        order
-      })
-      .then(() => {
-        alert(`order payed!`);
-      })
-      .catch(error => {
-        alert("problem paying order");
-        console.log(error);
-      });
-  }
+  };
 
   render() {
+    if (this.state.updated) {
+      this.updateOrderStatus();
+    }
     if (this.state.authentication) {
-      return (
-        <ContextProvider
-          value={{
-            ...this.state,
-            payOrder: this.payOrder,
-            fullfillOrder: this.fullfillOrder,
-            refundOrder: this.refundOrder,
-            setNavigation: this.setNavigation
-          }}
-        >
-          <Router>
-            <Navbar logout={this.logout} />
-            <Switch>
-              <Container>
-                <Route exact path="/" component={Orders} />
-                <Route exact path="/orders" component={Orders} />
-                <Route exact path="/customers" component={Customers} />
-                <Route exact path="/order" component={OrderDetails} />
-                <Route exact path="/customer" component={CustomerDetails} />
-              </Container>
-            </Switch>
-          </Router>
-        </ContextProvider>
-      );
+      if (this.state.orders) {
+        return (
+          <ContextProvider
+            value={{
+              ...this.state,
+              payOrder: this.payOrder,
+              fullfillOrder: this.fullfillOrder,
+              refundOrder: this.refundOrder,
+              setNavigation: this.setNavigation
+            }}
+          >
+            <Router>
+              <Navbar logout={this.logout} />
+              <Switch>
+                <Container>
+                  <Route exact path="/" component={Orders} />
+                  <Route exact path="/orders" component={Orders} />
+                  <Route exact path="/customers" component={Customers} />
+                  <Route exact path="/order" component={OrderDetails} />
+                  <Route exact path="/customer" component={CustomerDetails} />
+                </Container>
+              </Switch>
+            </Router>
+          </ContextProvider>
+        );
+      } else {
+        return null;
+      }
     } else {
-      return <Login login={this.login} />;
+      return (
+        <Container>
+          <Login login={this.login} />
+        </Container>
+      );
     }
   }
 }

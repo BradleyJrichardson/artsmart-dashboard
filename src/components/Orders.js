@@ -128,8 +128,6 @@ class Orders extends React.Component {
                 </Col>
               </Row>
               {this.state.filter === "all" ? mapAll() : mapFilter()}
-
-              <div className="text"> hello</div>
             </React.Fragment>
           );
         }}
